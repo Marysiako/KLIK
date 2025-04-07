@@ -1,6 +1,9 @@
 package com.example.klik.ui.screens.teacher
 
 import KLIKViewModel
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,14 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.klik.ui.screens.ClassListElement
 
-//EKRAN LISTY KLAS NAUCZYCIELA Z DOLNĄ NAWILIGACJĄ
+
 @Composable
-fun TeacherClassListScreen(viewModel: KLIKViewModel) {
+fun TeacherReceivedQuestionsScreen(viewModel: KLIKViewModel) {
     // Przykładowa lista przedmiotów i ID klas
-    val classList = listOf(
-        Pair("Matematyka", 101),
-        Pair("Fizyka", 102),
-        Pair("Biologia", 103)
+    val questionsList = listOf(
+        Pair("Czy kaczki sikają?", 1),
+        Pair("Jak sie robi pomidorową?", 2),
+        Pair("Student chce piwo, jakis losowy dłuższy tekst scooby dooby doo ", 3)
     )
 
     // Kontener dla całego ekranu
@@ -34,7 +37,7 @@ fun TeacherClassListScreen(viewModel: KLIKViewModel) {
     ) {
         // Górna część ekranu z tytułem
         Text(
-            text = "Klasy",
+            text = "Pytania",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier
                 .padding(24.dp)
@@ -46,8 +49,22 @@ fun TeacherClassListScreen(viewModel: KLIKViewModel) {
         LazyColumn(
             modifier = Modifier.weight(1f) // Sprawia, że lista zajmuje dostępne miejsce
         ) {
-            items(classList) { (subjectName, classId) ->
-                ClassListElement(viewModel = viewModel, subjectName = subjectName, classId = classId)
+            items(questionsList) { (questionText, questionId) ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clickable {
+                            /* USUN PYTANIE ID Z BAZY*/
+                        }
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = questionText,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
         }
 
@@ -55,15 +72,9 @@ fun TeacherClassListScreen(viewModel: KLIKViewModel) {
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Wyloguj */ },
+                onClick = { /* Powrót do TeacherClassDetailScreen */ },
                 icon = {},
-                label = { Text("Wyloguj") }
-            )
-            NavigationBarItem(
-                selected = false,
-                onClick = { /* Utwórz klasę */ },
-                icon = {},
-                label = { Text("Utwórz klasę") }
+                label = { Text("Powrót") }
             )
         }
     }
@@ -71,7 +82,6 @@ fun TeacherClassListScreen(viewModel: KLIKViewModel) {
 
 @Preview(showBackground = true)
 @Composable
-fun TeacherClassListScreenPreview() {
-    TeacherClassListScreen(viewModel = KLIKViewModel())
+fun TeacherReceivedQuestionsScreenPreview() {
+    TeacherReceivedQuestionsScreen(viewModel = KLIKViewModel())
 }
-

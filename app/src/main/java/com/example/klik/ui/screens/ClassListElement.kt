@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 // ELEMENT LISTY KLAS - zawiera nazwe i numer id
@@ -32,9 +33,19 @@ fun ClassListElement(viewModel: KLIKViewModel, subjectName: String, classId: Int
 
         // Tekst z numerem ID klasy
         Text(
-            text = "ID: $classId",
+            text = "$classId",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(start = 8.dp) // Dodajemy odstęp między elementami
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ClassListElementPreview() {
+    ClassListElement(
+        viewModel = KLIKViewModel(),
+        subjectName = "Matematyka",
+        classId = 101
+    )
 }

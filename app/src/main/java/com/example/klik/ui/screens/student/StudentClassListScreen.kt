@@ -1,4 +1,4 @@
-package com.example.klik.ui.screens.teacher
+package com.example.klik.ui.screens.student
 
 import KLIKViewModel
 import androidx.compose.foundation.layout.Column
@@ -18,9 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.klik.ui.screens.ClassListElement
 
-//EKRAN LISTY KLAS NAUCZYCIELA Z DOLNĄ NAWILIGACJĄ
+//EKRAN LISTY KLAS UCZNIA Z DOLNĄ NAWILIGACJĄ
 @Composable
-fun TeacherClassListScreen(viewModel: KLIKViewModel) {
+fun StudentClassListScreen(viewModel: KLIKViewModel) {
     // Przykładowa lista przedmiotów i ID klas
     val classList = listOf(
         Pair("Matematyka", 101),
@@ -44,7 +44,7 @@ fun TeacherClassListScreen(viewModel: KLIKViewModel) {
 
         // Lista przedmiotów
         LazyColumn(
-            modifier = Modifier.weight(1f) // Sprawia, że lista zajmuje dostępne miejsce
+            modifier = Modifier.weight(1f)
         ) {
             items(classList) { (subjectName, classId) ->
                 ClassListElement(viewModel = viewModel, subjectName = subjectName, classId = classId)
@@ -61,9 +61,9 @@ fun TeacherClassListScreen(viewModel: KLIKViewModel) {
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Utwórz klasę */ },
+                onClick = { /* Dodaj klasę */ },
                 icon = {},
-                label = { Text("Utwórz klasę") }
+                label = { Text("Dodaj klasę") }
             )
         }
     }
@@ -72,6 +72,5 @@ fun TeacherClassListScreen(viewModel: KLIKViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun TeacherClassListScreenPreview() {
-    TeacherClassListScreen(viewModel = KLIKViewModel())
+    StudentClassListScreen(viewModel = KLIKViewModel())
 }
-

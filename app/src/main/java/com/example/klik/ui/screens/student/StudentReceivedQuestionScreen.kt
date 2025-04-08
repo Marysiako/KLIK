@@ -78,21 +78,21 @@ fun StudentReceivedQuestionScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                onClick = {onAnswerAClick },
+                onClick = onAnswerAClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("A: $answerA")
             }
 
             Button(
-                onClick = { onAnswerBClick },
+                onClick = onAnswerBClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("B: $answerB")
             }
 
             Button(
-                onClick = {onAnswerCClick },
+                onClick = onAnswerCClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("C: $answerC")
@@ -103,7 +103,7 @@ fun StudentReceivedQuestionScreen(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onBackToClassDetailClick },
+                onClick = onBackToClassDetailClick,
                 icon = {},
                 label = { Text("Powrót") }
             )

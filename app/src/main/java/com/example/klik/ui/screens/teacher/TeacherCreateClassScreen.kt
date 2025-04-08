@@ -100,7 +100,7 @@ fun TeacherCreateClassScreen(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onBackToClassListClick},
+                onClick = onBackToClassListClick,
                 icon = {},
                 label = { Text("Powrót do klas") }
             )

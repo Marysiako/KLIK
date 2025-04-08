@@ -70,9 +70,7 @@ fun StudentAddClassScreen(
 
         // Przycisk dodajacy klase
         Button(
-            onClick = {
-                onAddClassClick
-            },
+            onClick = onAddClassClick,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -84,7 +82,7 @@ fun StudentAddClassScreen(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onBackToClassListScreen },
+                onClick = onBackToClassListScreen,
                 icon = {},
                 label = { Text("Powrót do klas") }
             )

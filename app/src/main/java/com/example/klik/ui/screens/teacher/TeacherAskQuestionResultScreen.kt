@@ -17,7 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TeacherAskQuestionResultScreen(viewModel: KLIKViewModel) {
+fun TeacherAskQuestionResultScreen(
+    viewModel: KLIKViewModel,
+    onCBackToClassClick: () -> Unit,
+    ) {
     val classId = 101
 
     // Przykładowa treść pytania i odpowiedzi (zastąpić danymi z ViewModel)
@@ -133,7 +136,7 @@ fun TeacherAskQuestionResultScreen(viewModel: KLIKViewModel) {
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Powrót do TeacherClassDetailScreen */ },
+                onClick = { onCBackToClassClick },
                 icon = {},
                 label = { Text("Powrót") }
             )
@@ -145,5 +148,8 @@ fun TeacherAskQuestionResultScreen(viewModel: KLIKViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun TeacherAskQuestionResultScreenPreview() {
-    TeacherAskQuestionResultScreen(viewModel = KLIKViewModel())
+    TeacherAskQuestionResultScreen(
+        viewModel = KLIKViewModel(),
+        onCBackToClassClick = {}
+    )
 }

@@ -26,20 +26,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StudentReceivedQuestionScreen(
+fun StudentAddClassScreen(
     viewModel: KLIKViewModel,
-    onAnswerAClick: () -> Unit,
-    onAnswerBClick: () -> Unit,
-    onAnswerCClick: () -> Unit,
-    onBackToClassDetailClick: () -> Unit
+    onAddClassClick: () -> Unit,
+    onBackToClassListScreen: () -> Unit
 ) {
-    val classId = 101
-
-    // Przykładowa treść pytania i odpowiedzi (zastąpić danymi z ViewModel)
-    val questionText = "Jakie piwo najlepsze?"
-    val answerA = "Harnaś"
-    val answerB = "Kozel"
-    val answerC = "Perła"
+    // Pamiętane stany dla pól tekstowych
+    var subjectID by remember { mutableStateOf("") }    //!!!BEDZIE TRZEBA ZMIENIC NA INT BO OutlinedTextField przyjmuje tylko string!!!!!
 
     Column(
         modifier = Modifier
@@ -50,76 +43,61 @@ fun StudentReceivedQuestionScreen(
         // Górny nagłówek
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Pytanie!",
+                text = "Dodaj Klase",
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Treść pytania
-        Text(
-            text = questionText,
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Odpowiedzi A, B, C jako przyciski
+        // Pola tekstowe
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = {onAnswerAClick },
+            // Odpowiedzi A, B, C
+            OutlinedTextField(
+                value = subjectID,
+                onValueChange = { subjectID = it },
+                label = { Text("Numer ID") },
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("A: $answerA")
-            }
+            )
+        }
 
-            Button(
-                onClick = { onAnswerBClick },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("B: $answerB")
-            }
 
-            Button(
-                onClick = {onAnswerCClick },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("C: $answerC")
-            }
+        // Przycisk dodajacy klase
+        Button(
+            onClick = {
+                onAddClassClick
+            },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(16.dp)
+        ) {
+            Text("Dodaj")
         }
 
         // Dolna nawigacja
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onBackToClassDetailClick },
+                onClick = { onBackToClassListScreen },
                 icon = {},
-                label = { Text("Powrót") }
+                label = { Text("Powrót do klas") }
             )
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun StudentReceivedQuestionScreenPreview() {
-    StudentReceivedQuestionScreen(
+fun StudentAddClassScreenPreview() {
+    StudentAddClassScreen(
         viewModel = KLIKViewModel(),
-        onAnswerAClick = {},
-        onAnswerBClick = {},
-        onAnswerCClick = {},
-        onBackToClassDetailClick = {}
+        onAddClassClick = {},
+        onBackToClassListScreen = {}
     )
 }

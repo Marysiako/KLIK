@@ -42,9 +42,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
@@ -60,6 +57,6 @@ fun GreetingPreview() {
 //            "matematyka",
 //            12345
 //        )
-        TeacherClassListScreen(viewModel= KLIKViewModel())
+        //TeacherClassListScreen(viewModel= KLIKViewModel())
     }
 }

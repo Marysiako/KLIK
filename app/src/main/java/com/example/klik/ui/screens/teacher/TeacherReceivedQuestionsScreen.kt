@@ -23,7 +23,10 @@ import com.example.klik.ui.screens.ClassListElement
 
 
 @Composable
-fun TeacherReceivedQuestionsScreen(viewModel: KLIKViewModel) {
+fun TeacherReceivedQuestionsScreen(
+    viewModel: KLIKViewModel,
+    onBackToClassClick: () -> Unit
+    ) {
     // Przykładowa lista przedmiotów i ID klas
     val questionsList = listOf(
         Pair("Czy kaczki sikają?", 1),
@@ -72,7 +75,7 @@ fun TeacherReceivedQuestionsScreen(viewModel: KLIKViewModel) {
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Powrót do TeacherClassDetailScreen */ },
+                onClick = { onBackToClassClick },
                 icon = {},
                 label = { Text("Powrót") }
             )
@@ -83,5 +86,8 @@ fun TeacherReceivedQuestionsScreen(viewModel: KLIKViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun TeacherReceivedQuestionsScreenPreview() {
-    TeacherReceivedQuestionsScreen(viewModel = KLIKViewModel())
+    TeacherReceivedQuestionsScreen(
+        viewModel = KLIKViewModel(),
+        onBackToClassClick = {}
+    )
 }

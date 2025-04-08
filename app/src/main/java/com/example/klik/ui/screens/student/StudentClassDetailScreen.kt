@@ -15,7 +15,13 @@ import androidx.compose.ui.unit.dp
 import com.example.klik.ui.screens.student.StudentClassListScreen
 
 @Composable
-fun StudentClassDetailScreen(viewModel: KLIKViewModel) {
+fun StudentClassDetailScreen(
+    viewModel: KLIKViewModel,
+    onIUnderstandClick: () -> Unit,
+    onIDontUnderstandClick: () -> Unit,
+    onSendQuestionToTeacherClick: () -> Unit,
+    onBackToClassListClick: () -> Unit
+) {
     // Przykładowe dane
     val subjectName = "Matematyka"
     val classId = 101
@@ -55,7 +61,7 @@ fun StudentClassDetailScreen(viewModel: KLIKViewModel) {
                     .fillMaxWidth()
                     .background(Color.Red)
                     .padding(vertical = 30.dp)
-                    .clickable { /* WYŚLIJ +1 NIE ROZUMIEM */ }
+                    .clickable { onIDontUnderstandClick }
             ) {
                 Text(
                     text = "Nie rozumiem",
@@ -70,7 +76,7 @@ fun StudentClassDetailScreen(viewModel: KLIKViewModel) {
                     .fillMaxWidth()
                     .background(Color.Green)
                     .padding(vertical = 30.dp)
-                    .clickable { /* WYŚLIJ +1 ROZUMIEM */ }
+                    .clickable { onIUnderstandClick }
             ) {
                 Text(
                     text = "Rozumiem",
@@ -92,7 +98,7 @@ fun StudentClassDetailScreen(viewModel: KLIKViewModel) {
             // Przycisk wysyłający pytanie
             Button(
                 onClick = {
-                    // WYŚLIJ PYTANIE
+                    onSendQuestionToTeacherClick
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
@@ -104,7 +110,7 @@ fun StudentClassDetailScreen(viewModel: KLIKViewModel) {
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Powrót do klas */ },
+                onClick = { onBackToClassListClick },
                 icon = {},
                 label = { Text("Powrót do klas") }
             )
@@ -116,5 +122,11 @@ fun StudentClassDetailScreen(viewModel: KLIKViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun StudentClassDetailScreenPreview() {
-    StudentClassDetailScreen(viewModel = KLIKViewModel())
+    StudentClassDetailScreen(
+        viewModel = KLIKViewModel(),
+        onIUnderstandClick = {},
+        onIDontUnderstandClick = {},
+        onSendQuestionToTeacherClick = {},
+        onBackToClassListClick = {}
+    )
 }

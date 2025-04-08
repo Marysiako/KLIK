@@ -30,7 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TeacherAskQuestionScreen(viewModel: KLIKViewModel) {
+fun TeacherAskQuestionScreen(
+    viewModel: KLIKViewModel,
+    onSendToStudentsClick: () -> Unit,
+    onBackToClassClick: () -> Unit
+    ) {
     val classId = 101
 
     // Pamiętane stany dla pól tekstowych
@@ -104,7 +108,7 @@ fun TeacherAskQuestionScreen(viewModel: KLIKViewModel) {
         // Przycisk wysyłający pytanie
         Button(
             onClick = {
-                // Tu logika wysłania pytania z odpowiedziami
+                onSendToStudentsClick
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -117,7 +121,7 @@ fun TeacherAskQuestionScreen(viewModel: KLIKViewModel) {
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Powrót */ },
+                onClick = { onBackToClassClick },
                 icon = {},
                 label = { Text("Powrót") }
             )
@@ -128,5 +132,9 @@ fun TeacherAskQuestionScreen(viewModel: KLIKViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun TeacherAskQuestionScreenPreview() {
-    TeacherAskQuestionScreen(viewModel = KLIKViewModel())
+    TeacherAskQuestionScreen(
+        viewModel = KLIKViewModel(),
+        onSendToStudentsClick = {},
+        onBackToClassClick = {}
+    )
 }

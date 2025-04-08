@@ -20,7 +20,12 @@ import com.example.klik.ui.screens.ClassListElement
 
 //EKRAN LISTY KLAS UCZNIA Z DOLNĄ NAWILIGACJĄ
 @Composable
-fun StudentClassListScreen(viewModel: KLIKViewModel) {
+fun StudentClassListScreen(
+    viewModel: KLIKViewModel,
+    onLogoutClick: () -> Unit,
+    onAddClassClick: () -> Unit,
+    onClassListElementClick: () -> Unit
+) {
     // Przykładowa lista przedmiotów i ID klas
     val classList = listOf(
         Pair("Matematyka", 101),
@@ -55,13 +60,13 @@ fun StudentClassListScreen(viewModel: KLIKViewModel) {
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Wyloguj */ },
+                onClick = { onLogoutClick },
                 icon = {},
                 label = { Text("Wyloguj") }
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { /* Dodaj klasę */ },
+                onClick = { onAddClassClick },
                 icon = {},
                 label = { Text("Dodaj klasę") }
             )
@@ -72,5 +77,10 @@ fun StudentClassListScreen(viewModel: KLIKViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun TeacherClassListScreenPreview() {
-    StudentClassListScreen(viewModel = KLIKViewModel())
+    StudentClassListScreen(
+        viewModel = KLIKViewModel(),
+        onLogoutClick = {},
+        onAddClassClick = {},
+        onClassListElementClick = {}
+    )
 }

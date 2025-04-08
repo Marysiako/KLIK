@@ -13,7 +13,12 @@ import androidx.compose.ui.unit.dp
 import com.example.klik.ui.screens.teacher.TeacherClassListScreen
 
 @Composable
-fun TeacherClassDetailScreen(viewModel: KLIKViewModel) {
+fun TeacherClassDetailScreen(
+    viewModel: KLIKViewModel,
+    onBackToClassListClick: () -> Unit,
+    onAskStudentsClick: () -> Unit,
+    onReceivedQuestionClick: () -> Unit
+) {
     // Przykładowe dane – zastąpić danymi z ViewModel
     val subjectName = "Matematyka"
     val classId = 101
@@ -100,19 +105,19 @@ fun TeacherClassDetailScreen(viewModel: KLIKViewModel) {
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { /* TODO: Powrót do klas */ },
+                onClick = { onBackToClassListClick },
                 icon = {},
                 label = { Text("Powrót do klas") }
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { /* TODO: Zadaj pytanie */ },
+                onClick = { onAskStudentsClick },
                 icon = {},
                 label = { Text("Zadaj pytanie") }
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { /* TODO: Pytania */ },
+                onClick = { onReceivedQuestionClick },
                 icon = {},
                 label = { Text("Pytania") }
             )
@@ -123,5 +128,9 @@ fun TeacherClassDetailScreen(viewModel: KLIKViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun TeacherClassDetailScreenPreview() {
-    TeacherClassDetailScreen(viewModel = KLIKViewModel())
+    TeacherClassDetailScreen(
+        viewModel = KLIKViewModel(),
+        onBackToClassListClick = {},
+        onAskStudentsClick = {},
+        onReceivedQuestionClick = {})
 }

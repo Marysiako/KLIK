@@ -75,7 +75,7 @@ fun TeacherReceivedQuestionsScreen(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onBackToClassClick },
+                onClick = onBackToClassClick,
                 icon = {},
                 label = { Text("Powrót") }
             )

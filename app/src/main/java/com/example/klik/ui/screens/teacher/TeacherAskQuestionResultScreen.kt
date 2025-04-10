@@ -136,7 +136,7 @@ fun TeacherAskQuestionResultScreen(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onCBackToClassClick },
+                onClick = onCBackToClassClick,
                 icon = {},
                 label = { Text("Powrót") }
             )

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 
 //EKRAN LOGIN - tu uzytkownik loguje się na swoje konto
 @Composable
-fun LoginScreen(viewModel: KLIKViewModel) {
+fun LoginScreen(viewModel: KLIKViewModel, bypassLoginStudentClick: () -> Unit, bypassLoginTeacherClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -78,12 +78,28 @@ fun LoginScreen(viewModel: KLIKViewModel) {
         ) {
             Text("Zaloguj")
         }
+        //
+        Button(
+            onClick = bypassLoginStudentClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Pomiń logowanie (student)")
+        }
+        //
+        Button(
+            onClick = bypassLoginTeacherClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Pomiń logowanie (nauczyciel)")
+        }
     }
 }
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        viewModel = KLIKViewModel()
+        viewModel = KLIKViewModel(),
+        bypassLoginStudentClick = {},
+        bypassLoginTeacherClick = {}
     )
 }

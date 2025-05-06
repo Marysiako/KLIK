@@ -105,19 +105,19 @@ fun TeacherClassDetailScreen(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onBackToClassListClick },
+                onClick = onBackToClassListClick,
                 icon = {},
                 label = { Text("Powrót do klas") }
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { onAskStudentsClick },
+                onClick = onAskStudentsClick,
                 icon = {},
                 label = { Text("Zadaj pytanie") }
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { onReceivedQuestionClick },
+                onClick = onReceivedQuestionClick,
                 icon = {},
                 label = { Text("Pytania") }
             )

@@ -60,13 +60,13 @@ fun StudentClassListScreen(
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onLogoutClick },
+                onClick = onLogoutClick,
                 icon = {},
                 label = { Text("Wyloguj") }
             )
             NavigationBarItem(
                 selected = false,
-                onClick = { onAddClassClick },
+                onClick = onAddClassClick,
                 icon = {},
                 label = { Text("Dodaj klasę") }
             )

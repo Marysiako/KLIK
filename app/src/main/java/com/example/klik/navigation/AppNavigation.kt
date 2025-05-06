@@ -29,7 +29,7 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = "teacherClassListScreen",
+            startDestination = "welcomeScreen",
             modifier = Modifier.padding(paddingValues)
         ) {
             //EKRANY  ---------------------------------------------------------------
@@ -41,7 +41,8 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                 )
             }
             composable("loginScreen") {
-                LoginScreen(viewModel = viewModel)
+                LoginScreen(viewModel = viewModel, bypassLoginStudentClick = { navController.navigate("studentClassListScreen") },
+                    bypassLoginTeacherClick = { navController.navigate("teacherClassListScreen")})
             }
             composable("registerScreen") {
                 RegisterScreen(viewModel = viewModel)
@@ -52,7 +53,7 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     viewModel = viewModel,
                     onLogoutClick = {navController.navigate("welcomeScreen")},
                     onCreateClassClick = {navController.navigate("teacherCreateClassScreen")},
-                    onClassListElementClick = {/* TODO: ZAIMPLEMENTOWAC */}
+                    onClassListElementClick = {navController.navigate("teacherClassDetailScreen")}
                 )
             }
             composable("teacherClassDetailScreen"){
@@ -66,7 +67,7 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
             composable("teacherCreateClassScreen"){
                 TeacherCreateClassScreen(
                     viewModel = viewModel,
-                    onCreateClassClick = { /* ZAIMPLEMENTOWAC PROSZE*/ },
+                    onCreateClassClick = {navController.navigate("teacherCreateClassListScreen")},
                     onBackToClassListClick = {navController.navigate("teacherClassListSceen")}
                 )
             }
@@ -95,7 +96,7 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     viewModel = viewModel,
                     onLogoutClick = {navController.navigate("welcomeScreen")},
                     onAddClassClick = {navController.navigate("studentAddClassScreen")},
-                    onClassListElementClick = {/* TODO: ZAIMPLEMENTOWAC */}
+                    onClassListElementClick = {navController.navigate("studentClassDetailScreen")}
                 )
             }
             composable("studentClassDetailScreen"){
@@ -119,8 +120,8 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
             composable("studentAddClassScreen"){
                 StudentAddClassScreen(
                     viewModel = viewModel,
-                    onAddClassClick = {/* TODO: ZAIMPLEMENTOWAC */},
-                    onBackToClassListScreen = {/* TODO: ZAIMPLEMENTOWAC */}
+                    onAddClassClick = {navController.navigate("studentClassListScreen")}, /* TODO: ZAIMPLEMENTOWAC */
+                    onBackToClassListScreen = {navController.navigate("studentClassListScreen")}
                 )
             }
 

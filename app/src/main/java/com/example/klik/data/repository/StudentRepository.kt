@@ -17,5 +17,6 @@ interface StudentRepository {
      * Dodaje identyfikator klasy do listy `classIds`
      * w dokumencie ucznia.
      */
+    fun uid(): String        // zwraca FirebaseAuth.uid
     suspend fun addClass(classId: String)
 }

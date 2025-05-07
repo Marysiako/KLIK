@@ -16,6 +16,8 @@ class StudentRepositoryImpl @Inject constructor(
     override fun current(): Flow<Student> =
         remote.observe(auth.currentUser!!.uid)
 
+    override fun uid(): String = auth.currentUser?.uid.orEmpty()
+
     override suspend fun addClass(classId: String) {
         remote.addClass(auth.currentUser!!.uid, classId)
     }

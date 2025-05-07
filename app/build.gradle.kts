@@ -74,4 +74,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.dagger:hilt-android:2.56.2")
     kapt("com.google.dagger:hilt-compiler:2.56.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }

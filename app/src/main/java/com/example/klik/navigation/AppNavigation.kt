@@ -23,6 +23,7 @@ import com.example.klik.ui.screens.teacher.TeacherReceivedQuestionsScreen
 import com.example.klik.viewmodel.AuthViewModel
 import com.example.klik.viewmodel.student.StudentAddClassVm
 import com.example.klik.viewmodel.student.StudentClassListVm
+import com.example.klik.viewmodel.teacher.TeacherClassDetailVm
 import com.example.klik.viewmodel.teacher.TeacherClassListVm
 import com.example.klik.viewmodel.teacher.TeacherCreateClassVm
 
@@ -83,12 +84,13 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     }
                 )
             }
-            composable("teacherClassDetailScreen"){
+            composable("teacherClassDetailScreen"){backStackEntry ->
+                val vm: TeacherClassDetailVm = hiltViewModel(backStackEntry)
                 TeacherClassDetailScreen(
-                    viewModel = viewModel,
+                    viewModel = vm,
                     onBackToClassListClick = {navController.navigate("teacherClassListScreen")},
-                    onAskStudentsClick = {navController.navigate("teacherAskQuestionScreen")},
-                    onReceivedQuestionClick = {navController.navigate("teacherReceivedQuestionsScreen")}
+                    onAskStudentsClick     = { navController.navigate("teacherAskQuestionScreen/${backStackEntry.arguments?.getString("classId")}") },
+                    onReceivedQuestionClick= { navController.navigate("teacherReceivedQuestionsScreen/${backStackEntry.arguments?.getString("classId")}") }
                     )
             }
             composable("teacherCreateClassScreen"){backStackEntry ->

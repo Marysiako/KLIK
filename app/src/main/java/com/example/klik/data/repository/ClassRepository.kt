@@ -23,4 +23,5 @@ interface ClassRepository {
 
     /** Dopisuje ucznia do `studentIds` klasy. */
     suspend fun addStudent(classId: String, studentId: String)
+    suspend fun get(id: String): SchoolClass?
 }

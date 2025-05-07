@@ -10,9 +10,10 @@ import javax.inject.Singleton
 
 @Singleton
 class ClassRepositoryImpl @Inject constructor(
-    private val remote: ClassRemoteDs
+    val remote: ClassRemoteDs
 ) : ClassRepository {
-
+    override suspend fun get(id: String): SchoolClass? =
+        remote.get(id)
     override fun observe(id: String): Flow<SchoolClass> =
         remote.observe(id)
 

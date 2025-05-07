@@ -29,10 +29,10 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     /** stany dla UI */
-    var isLoading  = mutableStateOf(false);      private set
-    var errorMsg   = mutableStateOf<String?>(null); private set
-    var isLoggedIn = mutableStateOf(false);      private set
-    var role       = mutableStateOf<String?>(null); private set   // "Uczeń" lub "Nauczyciel"
+    var isLoading = mutableStateOf(false); private set
+    var errorMsg = mutableStateOf<String?>(null); private set
+    var isLoggedIn = mutableStateOf(false); private set
+    var role = mutableStateOf<String?>(null); private set   // "Uczeń" lub "Nauczyciel"
 
     /** zamiana „username” → „username@klik.app” (Auth wymaga e-maila) */
     private fun toEmail(username: String) = "$username@klik.app"
@@ -50,13 +50,21 @@ class AuthViewModel @Inject constructor(
             errorMsg.value  = null
             try {
                 auth.signInWithEmailAndPassword(toEmail(username), password).await()
-                isLoggedIn.value = true
-                // sprawdź rolę (czy ma wpis w students czy teachers)
-                role.value = detectRole(auth.currentUser!!.uid)
+                val uid = auth.currentUser!!.uid
+
+                val student = studentRemote.get(uid)
+                val teacher = teacherRemote.get(uid)
+
+                role.value       = student?.role ?: teacher?.role
+                isLoggedIn.value = role.value != null
+
             } catch (e: Exception) {
                 errorMsg.value = e.message
-            } finally { isLoading.value = false }
+            } finally {
+                isLoading.value = false
+            }
         }
+
     }
 
     //REGISTER
@@ -69,36 +77,43 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             isLoading.value = true
-            errorMsg.value  = null
+            errorMsg.value = null
             try {
                 // 1) tworzymy użytkownika w FirebaseAuth
-                val result = auth.createUserWithEmailAndPassword(toEmail(username), password).await()
+                val result =
+                    auth.createUserWithEmailAndPassword(toEmail(username), password).await()
                 val uid = result.user!!.uid
 
                 // 2) dodajemy dokument w Firestore
                 if (selectedRole == "Uczeń") {
-                    val student = Student(uid = uid, username = username)
+                    val student = Student(uid = uid, username = username, role = "Uczeń")
                     studentRemote.create(student)
                 } else {   // "Nauczyciel"
-                    val teacher = Teacher(uid = uid, username = username)
+                    val teacher = Teacher(uid = uid, username = username, role = "Nauczyciel")
                     teacherRemote.create(teacher)
                 }
 
                 isLoggedIn.value = true
-                role.value       = selectedRole
+                role.value = selectedRole
             } catch (e: Exception) {
                 errorMsg.value = e.message
-            } finally { isLoading.value = false }
+            } finally {
+                isLoading.value = false
+            }
         }
     }
-
+}
     /* ───── pomocnicze ──────────────────────────────────────── */
-
+/*
     /** sprawdza, czy UID istnieje w kolekcji students, w przeciwnym razie teacher */
     private suspend fun detectRole(uid: String): String =
-        when {
-            studentRemote.get(uid) != null -> "Uczeń"
-            teacherRemote.get(uid) != null -> "Nauczyciel"
-            else -> "Brak roli"
-        }
+    val stud = StudentRemoteDs.get(uid)
+    if (stud != null) return stud.role
+
+    val teach = teacherRemote.get(uid)
+    if (teach != null) return teach.role
+
+    return null
+
 }
+*/

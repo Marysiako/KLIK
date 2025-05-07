@@ -6,5 +6,6 @@ import androidx.annotation.Keep
 data class Teacher(
     val uid: String = "",                       // = FirebaseAuth.uid
     val username: String = "",
-    val classIds: List<String> = emptyList()
+    val classIds: List<String> = emptyList(),
+    val role: String = "Nauczyciel"
 )

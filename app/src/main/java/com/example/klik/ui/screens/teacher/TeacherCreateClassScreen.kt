@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -26,24 +27,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.klik.viewmodel.teacher.TeacherCreateClassVm
 
 @Composable
 fun TeacherCreateClassScreen(
-    viewModel: KLIKViewModel,
-    onCreateClassClick: () -> Unit,
+    viewModel: TeacherCreateClassVm,
     onBackToClassListClick: () -> Unit
     ) {
     // Pamiętane stany dla pól tekstowych
     var subjectName by remember { mutableStateOf("") }
-    var subjectID by remember { mutableStateOf("") }    //!!!BEDZIE TRZEBA ZMIENIC NA INT BO OutlinedTextField przyjmuje tylko string!!!!!
+    var subjectID   by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .padding(16.dp)
     ) {
         // Górny nagłówek
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -68,11 +69,9 @@ fun TeacherCreateClassScreen(
                 value = subjectName,
                 onValueChange = { subjectName = it },
                 label = { Text("Nazwa klasy") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
-                maxLines = 5
+                modifier = Modifier.fillMaxWidth()
             )
+
 
             // Odpowiedzi A, B, C
             OutlinedTextField(
@@ -81,19 +80,36 @@ fun TeacherCreateClassScreen(
                 label = { Text("Numer ID") },
                 modifier = Modifier.fillMaxWidth()
             )
+            viewModel.errorMessage.value?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
 
         // Przycisk resetujący
         Button(
             onClick = {
-                onCreateClassClick
+                viewModel.onCreateClass(
+                    name = subjectName,
+                    id   = subjectID,
+                    onSuccess = onBackToClassListClick
+                )
             },
+            enabled = !viewModel.isCreating.value,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
         ) {
-            Text("Utwórz")
+            if (viewModel.isCreating.value) {
+                CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
+            } else {
+                Text("Utwórz")
+            }
         }
 
         // Dolna nawigacja
@@ -106,13 +122,4 @@ fun TeacherCreateClassScreen(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TeacherCreateClassScreenPreview() {
-    TeacherCreateClassScreen(
-        viewModel = KLIKViewModel(),
-        onCreateClassClick = {},
-        onBackToClassListClick = {})
 }

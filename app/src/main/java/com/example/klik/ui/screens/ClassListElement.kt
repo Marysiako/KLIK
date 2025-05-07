@@ -15,7 +15,9 @@ import androidx.compose.ui.unit.dp
 
 // ELEMENT LISTY KLAS - zawiera nazwe i numer id
 @Composable
-fun ClassListElement(viewModel: KLIKViewModel, subjectName: String, classId: Int) {
+fun ClassListElement(    subjectName: String,
+                         classId: Int,
+                         onClick: () -> Unit ) {
     // Kontener, który będzie zawierał nazwę przedmiotu oraz numer ID klasy
     Row(
         modifier = Modifier
@@ -40,12 +42,3 @@ fun ClassListElement(viewModel: KLIKViewModel, subjectName: String, classId: Int
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ClassListElementPreview() {
-    ClassListElement(
-        viewModel = KLIKViewModel(),
-        subjectName = "Matematyka",
-        classId = 101
-    )
-}

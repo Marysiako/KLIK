@@ -22,6 +22,9 @@ import com.example.klik.ui.screens.teacher.TeacherCreateClassScreen
 import com.example.klik.ui.screens.teacher.TeacherReceivedQuestionsScreen
 import com.example.klik.viewmodel.AuthViewModel
 import com.example.klik.viewmodel.student.StudentAddClassVm
+import com.example.klik.viewmodel.student.StudentClassListVm
+import com.example.klik.viewmodel.teacher.TeacherClassListVm
+import com.example.klik.viewmodel.teacher.TeacherCreateClassVm
 
 @Composable
 fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
@@ -69,12 +72,15 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     )
             }
             //EKRANY TEACHER    -----------------------------------------------------
-            composable("teacherClassListScreen"){
+            composable("teacherClassListScreen"){backStackEntry ->
+                val vm: TeacherClassListVm = hiltViewModel(backStackEntry)
                 TeacherClassListScreen(
-                    viewModel = viewModel,
-                    onLogoutClick = {navController.navigate("welcomeScreen")},
-                    onCreateClassClick = {navController.navigate("teacherCreateClassScreen")},
-                    onClassListElementClick = {navController.navigate("teacherClassDetailScreen")}
+                    viewModel = vm,
+                    onLogoutClick         = { navController.navigate("welcomeScreen") { popUpTo("teacherClassList") { inclusive = true } } },
+                    onCreateClassClick    = { navController.navigate("teacherCreateClassScreen") },
+                    onClassListElementClick = { classId ->
+                        navController.navigate("teacherClassDetailScreen/$classId")
+                    }
                 )
             }
             composable("teacherClassDetailScreen"){
@@ -85,11 +91,11 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     onReceivedQuestionClick = {navController.navigate("teacherReceivedQuestionsScreen")}
                     )
             }
-            composable("teacherCreateClassScreen"){
+            composable("teacherCreateClassScreen"){backStackEntry ->
+                val vm: TeacherCreateClassVm = hiltViewModel(backStackEntry)
                 TeacherCreateClassScreen(
-                    viewModel = viewModel,
-                    onCreateClassClick = {navController.navigate("teacherCreateClassListScreen")},
-                    onBackToClassListClick = {navController.navigate("teacherClassListSceen")}
+                    viewModel = vm,
+                    onBackToClassListClick = { navController.popBackStack()}
                 )
             }
             composable("teacherAskQuestionScreen"){
@@ -113,11 +119,14 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
             }
             //EKRANY STUDENT --------------------------------------------------------
             composable("studentClassListScreen"){
+                val vm: StudentClassListVm = hiltViewModel()
                 StudentClassListScreen(
-                    viewModel = viewModel,
-                    onLogoutClick = {navController.navigate("welcomeScreen")},
-                    onAddClassClick = {navController.navigate("studentAddClassScreen")},
-                    onClassListElementClick = {navController.navigate("studentClassDetailScreen")}
+                    viewModel = vm,
+                    onLogoutClick = { navController.navigate("welcomeScreen") { popUpTo("studentClassListScreen") { inclusive = true } } },
+                    onAddClassClick = { navController.navigate("studentAddClassScreen") },
+                    onClassListElementClick = { classId ->
+                        navController.navigate("studentClassDetailScreen/$classId")
+                    }
                 )
             }
             composable("studentClassDetailScreen"){

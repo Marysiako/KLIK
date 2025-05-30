@@ -1,6 +1,5 @@
 package com.example.klik.ui.screens.student
 
-import KLIKViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,13 +24,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.size
+import com.example.klik.data.model.SchoolClass
+import com.example.klik.data.model.Student
+import com.example.klik.data.repository.ClassRepository
+import com.example.klik.data.repository.StudentRepository
+import com.example.klik.viewmodel.student.StudentAddClassVm
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun StudentAddClassScreen(
-    viewModel: KLIKViewModel,
-    onAddClassClick: () -> Unit,
-    onBackToClassListScreen: () -> Unit
-) {
+    viewModel: StudentAddClassVm,
+    onBackToClassListScreen: () -> Unit) {
+
     // Pamiętane stany dla pól tekstowych
     var subjectID by remember { mutableStateOf("") }    //!!!BEDZIE TRZEBA ZMIENIC NA INT BO OutlinedTextField przyjmuje tylko string!!!!!
 
@@ -70,13 +77,27 @@ fun StudentAddClassScreen(
 
         // Przycisk dodajacy klase
         Button(
-            onClick = onAddClassClick,
+            onClick = {
+                viewModel.onJoinClass(
+                    classId = subjectID,
+                    onSuccess = onBackToClassListScreen   // wracamy po sukcesie
+                )
+            },
+            enabled = subjectID.isNotBlank() && !viewModel.isJoining,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
         ) {
-            Text("Dodaj")
+            if (viewModel.isJoining) {
+                CircularProgressIndicator(
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(20.dp)
+                )
+            } else {
+                Text("Dodaj")
+            }
         }
+
 
         // Dolna nawigacja
         NavigationBar {
@@ -93,9 +114,27 @@ fun StudentAddClassScreen(
 @Preview(showBackground = true)
 @Composable
 fun StudentAddClassScreenPreview() {
+    val previewVm = remember {
+        StudentAddClassVm(
+            studentRepo = object : StudentRepository {
+                override fun current() = flowOf(Student())
+                override suspend fun addClass(classId: String) {}
+                override fun uid(): String = "previewUid"
+            },
+            classRepo = object : ClassRepository {
+                override fun observe(id: String)           = flowOf(SchoolClass())
+                override fun observeMany(ids: List<String>) =
+                    flowOf(emptyList<SchoolClass>())
+                override suspend fun create(schoolClass: SchoolClass) {}
+                override suspend fun addStudent(classId: String, studentId: String) {}
+            },
+            auth = FirebaseAuth.getInstance()
+        )
+    }
+
+    // ▶︎ 2. Wywołujemy ekran z tym VM-em
     StudentAddClassScreen(
-        viewModel = KLIKViewModel(),
-        onAddClassClick = {},
+        viewModel = previewVm,
         onBackToClassListScreen = {}
     )
 }

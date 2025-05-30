@@ -12,27 +12,31 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.klik.ui.screens.ClassListElement
+import com.example.klik.viewmodel.teacher.TeacherClassListVm
 
 //EKRAN LISTY KLAS NAUCZYCIELA Z DOLNĄ NAWILIGACJĄ
 @Composable
 fun TeacherClassListScreen(
-    viewModel: KLIKViewModel,
+    viewModel: TeacherClassListVm,
     onLogoutClick: () -> Unit,
     onCreateClassClick: () -> Unit,
-    onClassListElementClick: () -> Unit
+    onClassListElementClick: (String /*classId*/) -> Unit
 ) {
     // Przykładowa lista przedmiotów i ID klas
+    /*
     val classList = listOf(
         Pair("Matematyka", 101),
         Pair("Fizyka", 102),
         Pair("Biologia", 103)
     )
-
+    */
+    val classList = viewModel.uiState.collectAsState()
     // Kontener dla całego ekranu
     Column(
         modifier = Modifier.fillMaxSize()
@@ -48,11 +52,13 @@ fun TeacherClassListScreen(
         )
 
         // Lista przedmiotów
-        LazyColumn(
-            modifier = Modifier.weight(1f) // Sprawia, że lista zajmuje dostępne miejsce
-        ) {
-            items(classList) { (subjectName, classId) ->
-                ClassListElement(viewModel = viewModel, subjectName = subjectName, classId = classId)
+        LazyColumn(Modifier.weight(1f)) {
+            items(classList.value) { schoolClass ->
+                ClassListElement(
+                    subjectName = schoolClass.name,
+                    classId     = schoolClass.id.toIntOrNull() ?: 0,
+                    onClick     = { onClassListElementClick(schoolClass.id) }
+                )
             }
         }
 
@@ -74,14 +80,4 @@ fun TeacherClassListScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun TeacherClassListScreenPreview() {
-    TeacherClassListScreen(
-        viewModel = KLIKViewModel(),
-        onLogoutClick = {},
-        onCreateClassClick = {},
-        onClassListElementClick = {}
-    )
-}
 

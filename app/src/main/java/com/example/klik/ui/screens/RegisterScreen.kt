@@ -16,6 +16,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,12 +27,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.klik.viewmodel.AuthViewModel
 
 //EKRAN REGISTER - tu uzytkownik tworzy nowe konto
 @Composable
-fun RegisterScreen(viewModel: KLIKViewModel) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun RegisterScreen(
+    viewModel: AuthViewModel,
+    onRegistered: (String /* rola */) -> Unit
+) {
+    var username     by remember { mutableStateOf("") }
+    var password     by remember { mutableStateOf("") }
     var selectedRole by remember { mutableStateOf("Uczeń") }
 
     Column(
@@ -96,17 +101,28 @@ fun RegisterScreen(viewModel: KLIKViewModel) {
 
         // Przycisk "Utwórz konto"
         Button(
-            onClick = {
-                // Tu wywołaj metodę rejestracji z viewModel
-                // viewModel.register(username, password, selectedRole)
-            },
+            onClick  = { viewModel.register(username, password, selectedRole) },
+            enabled  = !viewModel.isLoading.value,
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Utwórz konto")
+        ) { Text("Utwórz konto") }
+        //
+        viewModel.errorMsg.value?.let {
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        LaunchedEffect(viewModel.isLoggedIn.value) {
+            if (viewModel.isLoggedIn.value) {
+                onRegistered(viewModel.role.value ?: selectedRole)
+            }
         }
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
@@ -114,3 +130,5 @@ fun RegisterScreenPreview() {
         viewModel = KLIKViewModel()
     )
 }
+
+ */

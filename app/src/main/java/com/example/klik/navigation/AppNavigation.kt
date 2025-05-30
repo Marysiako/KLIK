@@ -3,6 +3,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,11 +20,16 @@ import com.example.klik.ui.screens.teacher.TeacherAskQuestionScreen
 import com.example.klik.ui.screens.teacher.TeacherClassListScreen
 import com.example.klik.ui.screens.teacher.TeacherCreateClassScreen
 import com.example.klik.ui.screens.teacher.TeacherReceivedQuestionsScreen
+import com.example.klik.viewmodel.AuthViewModel
+import com.example.klik.viewmodel.student.StudentAddClassVm
+import com.example.klik.viewmodel.student.StudentClassListVm
+import com.example.klik.viewmodel.teacher.TeacherClassDetailVm
+import com.example.klik.viewmodel.teacher.TeacherClassListVm
+import com.example.klik.viewmodel.teacher.TeacherCreateClassVm
 
 @Composable
 fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
     val navController = rememberNavController()
-
     Scaffold(
         // bottomBar = { BottomNavigationBar(navController = navController) }
     ) { paddingValues ->
@@ -41,34 +47,57 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                 )
             }
             composable("loginScreen") {
-                LoginScreen(viewModel = viewModel, bypassLoginStudentClick = { navController.navigate("studentClassListScreen") },
+                val vm: AuthViewModel = hiltViewModel()
+                LoginScreen(
+                    viewModel = vm,
+                    onLoggedIn = { role ->
+                        when (role) {
+                            "Uczeń"     -> navController.navigate("studentClassListScreen") { popUpTo("login") { inclusive = true } }
+                            "Nauczyciel" -> navController.navigate("teacherClassListScreen") { popUpTo("login") { inclusive = true } }
+                            else          -> {/* fallback */}
+                        }
+                    },
+                    bypassLoginStudentClick = { navController.navigate("studentClassListScreen") },
                     bypassLoginTeacherClick = { navController.navigate("teacherClassListScreen")})
             }
             composable("registerScreen") {
-                RegisterScreen(viewModel = viewModel)
-            }
-            //EKRANY TEACHER    -----------------------------------------------------
-            composable("teacherClassListScreen"){
-                TeacherClassListScreen(
-                    viewModel = viewModel,
-                    onLogoutClick = {navController.navigate("welcomeScreen")},
-                    onCreateClassClick = {navController.navigate("teacherCreateClassScreen")},
-                    onClassListElementClick = {navController.navigate("teacherClassDetailScreen")}
-                )
-            }
-            composable("teacherClassDetailScreen"){
-                TeacherClassDetailScreen(
-                    viewModel = viewModel,
-                    onBackToClassListClick = {navController.navigate("teacherClassListScreen")},
-                    onAskStudentsClick = {navController.navigate("teacherAskQuestionScreen")},
-                    onReceivedQuestionClick = {navController.navigate("teacherReceivedQuestionsScreen")}
+                val vm: AuthViewModel = hiltViewModel()
+                RegisterScreen(
+                    viewModel = vm,
+                    onRegistered = { role ->
+                        when (role) {
+                            "Uczeń"     -> navController.navigate("studentClassListScreen") { popUpTo("login") { inclusive = true } }
+                            "Nauczyciel" -> navController.navigate("teacherClassListScreen") { popUpTo("login") { inclusive = true } }
+                        }
+                    }
                     )
             }
-            composable("teacherCreateClassScreen"){
+            //EKRANY TEACHER    -----------------------------------------------------
+            composable("teacherClassListScreen"){backStackEntry ->
+                val vm: TeacherClassListVm = hiltViewModel(backStackEntry)
+                TeacherClassListScreen(
+                    viewModel = vm,
+                    onLogoutClick         = { navController.navigate("welcomeScreen") { popUpTo("teacherClassList") { inclusive = true } } },
+                    onCreateClassClick    = { navController.navigate("teacherCreateClassScreen") },
+                    onClassListElementClick = { classId ->
+                        navController.navigate("teacherClassDetailScreen/$classId")
+                    }
+                )
+            }
+            composable("teacherClassDetailScreen"){backStackEntry ->
+                val vm: TeacherClassDetailVm = hiltViewModel(backStackEntry)
+                TeacherClassDetailScreen(
+                    viewModel = vm,
+                    onBackToClassListClick = {navController.navigate("teacherClassListScreen")},
+                    onAskStudentsClick     = { navController.navigate("teacherAskQuestionScreen/${backStackEntry.arguments?.getString("classId")}") },
+                    onReceivedQuestionClick= { navController.navigate("teacherReceivedQuestionsScreen/${backStackEntry.arguments?.getString("classId")}") }
+                    )
+            }
+            composable("teacherCreateClassScreen"){backStackEntry ->
+                val vm: TeacherCreateClassVm = hiltViewModel(backStackEntry)
                 TeacherCreateClassScreen(
-                    viewModel = viewModel,
-                    onCreateClassClick = {navController.navigate("teacherCreateClassListScreen")},
-                    onBackToClassListClick = {navController.navigate("teacherClassListSceen")}
+                    viewModel = vm,
+                    onBackToClassListClick = { navController.popBackStack()}
                 )
             }
             composable("teacherAskQuestionScreen"){
@@ -92,11 +121,14 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
             }
             //EKRANY STUDENT --------------------------------------------------------
             composable("studentClassListScreen"){
+                val vm: StudentClassListVm = hiltViewModel()
                 StudentClassListScreen(
-                    viewModel = viewModel,
-                    onLogoutClick = {navController.navigate("welcomeScreen")},
-                    onAddClassClick = {navController.navigate("studentAddClassScreen")},
-                    onClassListElementClick = {navController.navigate("studentClassDetailScreen")}
+                    viewModel = vm,
+                    onLogoutClick = { navController.navigate("welcomeScreen") { popUpTo("studentClassListScreen") { inclusive = true } } },
+                    onAddClassClick = { navController.navigate("studentAddClassScreen") },
+                    onClassListElementClick = { classId ->
+                        navController.navigate("studentClassDetailScreen/$classId")
+                    }
                 )
             }
             composable("studentClassDetailScreen"){
@@ -118,9 +150,10 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                 )
             }
             composable("studentAddClassScreen"){
+                val vm: StudentAddClassVm = hiltViewModel()
                 StudentAddClassScreen(
-                    viewModel = viewModel,
-                    onAddClassClick = {navController.navigate("studentClassListScreen")}, /* TODO: ZAIMPLEMENTOWAC */
+                    viewModel = vm,
+                   // onAddClassClick = {navController.navigate("studentClassListScreen")}, /* TODO: ZAIMPLEMENTOWAC */
                     onBackToClassListScreen = {navController.navigate("studentClassListScreen")}
                 )
             }

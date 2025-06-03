@@ -125,8 +125,8 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                 TeacherClassDetailScreen(
                     viewModel = vm,
                     onBackToClassListClick = { navController.navigate("teacherClassListScreen") },
-                    onAskStudentsClick     = { navController.navigate("teacherAskQuestionScreen/${vm.uiState.value.id}") },
-                    onReceivedQuestionClick= { navController.navigate("teacherReceivedQuestionsScreen/${vm.uiState.value.id}") }
+                    onAskStudentsClick     = { navController.navigate("teacherAskQuestionScreen") },
+                    onReceivedQuestionClick= { navController.navigate("teacherReceivedQuestionsScreen") }
                 )
             }
             composable("teacherCreateClassScreen"){backStackEntry ->

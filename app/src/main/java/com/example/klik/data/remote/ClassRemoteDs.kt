@@ -15,7 +15,7 @@ import javax.inject.Singleton
 class ClassRemoteDs @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
-    val col get() = firestore.collection("classes")
+    private val col get() = firestore.collection("classes")
 
     suspend fun create(schoolClass: SchoolClass) =
         col.document(schoolClass.id).set(schoolClass).await()
@@ -52,5 +52,4 @@ class ClassRemoteDs @Inject constructor(
 
     suspend fun addStudent(classId: String, studentId: String) =
         col.document(classId).update("studentIds", FieldValue.arrayUnion(studentId)).await()
-
 }

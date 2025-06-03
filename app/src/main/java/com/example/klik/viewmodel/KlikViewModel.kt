@@ -10,6 +10,4 @@ class KLIKViewModel : ViewModel() {
     //Funkcja sprawdza czy nazwa uzytkownika jest dostepna, jesli tak to tworzy uzytkownika i na niego loguje
     //register(username, password, selectedRole)
 
-
-
 }

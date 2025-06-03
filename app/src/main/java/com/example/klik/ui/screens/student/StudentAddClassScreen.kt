@@ -127,6 +127,9 @@ fun StudentAddClassScreenPreview() {
                     flowOf(emptyList<SchoolClass>())
                 override suspend fun create(schoolClass: SchoolClass) {}
                 override suspend fun addStudent(classId: String, studentId: String) {}
+                override suspend fun get(id: String): SchoolClass? {
+                    TODO("Not yet implemented")
+                }
             },
             auth = FirebaseAuth.getInstance()
         )

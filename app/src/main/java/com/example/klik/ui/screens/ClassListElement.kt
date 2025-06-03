@@ -1,6 +1,7 @@
 package com.example.klik.ui.screens
 
 import KLIKViewModel
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,30 +16,30 @@ import androidx.compose.ui.unit.dp
 
 // ELEMENT LISTY KLAS - zawiera nazwe i numer id
 @Composable
-fun ClassListElement(    subjectName: String,
-                         classId: Int,
-                         onClick: () -> Unit ) {
-    // Kontener, który będzie zawierał nazwę przedmiotu oraz numer ID klasy
+fun ClassListElement(
+    subjectName: String,
+    classId: Int,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() } // <<< TO DODAJ
             .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween, // Elementy będą wyświetlane po dwóch stronach
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Tekst z nazwą przedmiotu
         Text(
             text = subjectName,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f) // Umożliwia rozciągnięcie elementu na całą szerokość
+            modifier = Modifier.weight(1f)
         )
-
-        // Tekst z numerem ID klasy
         Text(
             text = "$classId",
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(start = 8.dp) // Dodajemy odstęp między elementami
+            modifier = Modifier.padding(start = 8.dp)
         )
     }
 }
+
 

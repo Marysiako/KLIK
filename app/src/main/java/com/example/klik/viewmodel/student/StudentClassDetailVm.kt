@@ -3,8 +3,9 @@ package com.example.klik.viewmodel.student
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.klik.data.model.Question
 import com.example.klik.data.repository.ClassRepository
-import com.example.klik.viewmodel.teacher.setCounters
+import com.example.klik.data.repository.QuestionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,59 +17,44 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class StudentClassDetailVm @Inject constructor(
     private val classRepo: ClassRepository,
+    private val questionRepo: QuestionRepository,   // <-- wstrzyknięty repo
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val classId: String =
         checkNotNull(savedStateHandle["classId"]) { "classId missing" }
 
-    /** UI-state dla ekranu szczegółów klasy ucznia */
+    /* -------- UI state -------- */
     data class UiState(
         val name: String = "",
-        val id: String = "",
-        val understand: Int = 0,
-        val dontUnderstand: Int = 0
+        val id: String = ""
     )
-
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            classRepo.observe(classId)
-                .collect { cls ->
-                    _uiState.update {
-                        it.copy(
-                            name             = cls.name,
-                            id               = cls.id,
-                            //understand       = cls.understandCount,
-                            //dontUnderstand   = cls.dontUnderstandCount
-                        )
-                    }
-                }
+            classRepo.observe(classId).collect { cls ->
+                _uiState.update { it.copy(name = cls.name, id = cls.id) }
+            }
         }
     }
 
-    /** Uczeń może wysłać pytanie lub reakcję do nauczyciela — metody do implementacji */
+    /* -------- Reakcje -------- */
+    //fun incrementUnderstand()   = viewModelScope.launch { classRepo.incrementUnderstand(classId) }
+    //fun incrementDontUnderstand() = viewModelScope.launch { classRepo.incrementDontUnderstand(classId) }
 
-    fun incrementUnderstand() {
-        viewModelScope.launch {
-            val newCount = _uiState.value.understand + 1
-            classRepo.setCounters(classId, newCount, _uiState.value.dontUnderstand)
-        }
-    }
+    /* -------- Wysyłanie pytania uczeń ➜ uczeń -------- */
+    fun sendQuestion(questionText: String) = viewModelScope.launch {
+        val txt = questionText.trim()
+        if (txt.isEmpty()) return@launch
 
-    fun incrementDontUnderstand() {
-        viewModelScope.launch {
-            val newCount = _uiState.value.dontUnderstand + 1
-            classRepo.setCounters(classId, _uiState.value.understand, newCount)
-        }
-    }
-
-    fun sendQuestionToTeacher(questionText: String) {
-        viewModelScope.launch {
-            // TODO: implementacja wysłania pytania do nauczyciela
-            // Możesz użyć klasy repo do zapisu pytania w bazie danych
-        }
+        val q = Question(
+            text = txt,
+            answers = List(4) { "" },
+            answerScores = List(4) { 0 },
+            fromTeacher = false          // flagę dodałeś wcześniej
+        )
+        questionRepo.create(classId, q)
     }
 }

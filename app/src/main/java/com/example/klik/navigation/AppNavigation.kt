@@ -178,7 +178,7 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     onIUnderstandClick = {/* TODO */},
                     onIDontUnderstandClick = {/* TODO */},
                     onGoToQuestionFromTeacher = {  navController.navigate("studentReceivedQuestionScreen")  /*Tu dodać przejście do ekranu z pytaniem od nauczyciela dla uczniow dla klasy o danym id*/ },
-                    onSendQuestionToTeacherClick = {/* TODO */}
+                    //onSendQuestionToTeacherClick = {/* TODO */}
                 )
             }
 

@@ -13,17 +13,27 @@ import javax.inject.Singleton
 class QuestionRemoteDs @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
-    private fun questionsCol(classId: String) =
-        firestore.collection("classes").document(classId).collection("questions")
 
-    suspend fun create(classId: String, question: Question) =
-        questionsCol(classId).document(question.id).set(question).await()
+    /** Zapisuje pytanie w kolekcji `/classes/{classId}/questions` */
+    suspend fun create(classId: String, q: Question) {
+        firestore.collection("classes")
+            .document(classId)
+            .collection("questions")
+            .add(q)
+            .await()
+    }
 
+    /** Live-stream pytań z danej klasy (uczniowskich + nauczycielskich) */
     fun observe(classId: String): Flow<List<Question>> = callbackFlow {
-        val reg = questionsCol(classId)
-            .addSnapshotListener { snap, _ ->
-                val list = snap?.toObjects(Question::class.java) ?: emptyList()
-                trySend(list)
+        val reg = firestore.collection("classes")
+            .document(classId)
+            .collection("questions")
+            .addSnapshotListener { snap, err ->
+                if (err != null) {
+                    close(err)
+                    return@addSnapshotListener
+                }
+                trySend(snap?.toObjects(Question::class.java) ?: emptyList())
             }
         awaitClose { reg.remove() }
     }

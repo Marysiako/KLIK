@@ -147,7 +147,9 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     onBackToClassListClick  = { navController.navigate("studentClassListScreen") },
                     onIUnderstandClick      = { /* opcjonalnie */ },
                     onIDontUnderstandClick  = { /* opcjonalnie */ },
-                    onGoToQuestionFromTeacher = { navController.navigate("studentReceivedQuestionScreen/$classId") }
+                    onGoToQuestionFromTeacher = {
+                        navController.navigate("studentReceivedQuestionScreen/$classId")
+                    }
                 )
             }
 
@@ -158,9 +160,10 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
             ) { backStackEntry ->
                 StudentReceivedQuestionScreen(
                     viewModel = viewModel,
-                    onAnswerAClick        = { /* TODO */ },
-                    onAnswerBClick        = { /* TODO */ },
-                    onAnswerCClick        = { /* TODO */ },
+                    onAnswerAClick = { /* ewentualny Toast/log */ },
+                    onAnswerBClick = { /* ewentualny Toast/log */ },
+                    onAnswerCClick = { /* ewentualny Toast/log */ },
+                    onAnswerDClick = { /* ewentualny Toast/log */ },
                     onBackToClassDetailClick = {
                         val classId = backStackEntry.arguments?.getString("classId") ?: ""
                         navController.navigate("studentClassDetailScreen/$classId")

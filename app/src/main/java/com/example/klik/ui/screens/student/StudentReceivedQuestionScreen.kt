@@ -1,29 +1,15 @@
 package com.example.klik.ui.screens.student
 
 import KLIKViewModel
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.klik.viewmodel.student.StudentReceivedQuestionVm
 
 @Composable
 fun StudentReceivedQuestionScreen(
@@ -31,75 +17,72 @@ fun StudentReceivedQuestionScreen(
     onAnswerAClick: () -> Unit,
     onAnswerBClick: () -> Unit,
     onAnswerCClick: () -> Unit,
+    onAnswerDClick: () -> Unit,
     onBackToClassDetailClick: () -> Unit
 ) {
-    val classId = 101
-
-    // Przykładowa treść pytania i odpowiedzi (zastąpić danymi z ViewModel)
-    val questionText = "Jakie piwo najlepsze?"
-    val answerA = "Harnaś"
-    val answerB = "Kozel"
-    val answerC = "Perła"
+    val recvVm: StudentReceivedQuestionVm = hiltViewModel()
+    val q by recvVm.question.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Górny nagłówek
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Pytanie!",
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Treść pytania
+        /* ───── NAGŁÓWEK ───── */
         Text(
-            text = questionText,
-            style = MaterialTheme.typography.bodyLarge,
+            text = "Pytanie od nauczyciela",
+            style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(Modifier.height(24.dp))
 
-        // Odpowiedzi A, B, C jako przyciski
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(
-                onClick = onAnswerAClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("A: $answerA")
-            }
+        /* ───── TREŚĆ PYTANIA ───── */
+        if (q == null) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+            Text(
+                text = q!!.text,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
 
-            Button(
-                onClick = onAnswerBClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("B: $answerB")
-            }
+            Spacer(Modifier.height(32.dp))
 
-            Button(
-                onClick = onAnswerCClick,
-                modifier = Modifier.fillMaxWidth()
+            /* ───── CZTERY ODPOWIEDZI ───── */
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("C: $answerC")
+                repeat(4) { i ->
+                    val label = q!!.answers.getOrNull(i).orEmpty()
+                    Button(
+                        onClick = {
+                            recvVm.sendAnswer(i)
+                            when (i) {
+                                0 -> onAnswerAClick()
+                                1 -> onAnswerBClick()
+                                2 -> onAnswerCClick()
+                                3 -> onAnswerDClick()
+                            }
+                        },
+                        enabled = label.isNotBlank(),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("${'A' + i}: ${if (label.isNotBlank()) label else "—"}")
+                    }
+                }
             }
         }
 
-        // Dolna nawigacja
+        /* ───── DOLNA NAWIGACJA ───── */
         NavigationBar {
             NavigationBarItem(
                 selected = false,
@@ -109,17 +92,4 @@ fun StudentReceivedQuestionScreen(
             )
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun StudentReceivedQuestionScreenPreview() {
-    StudentReceivedQuestionScreen(
-        viewModel = KLIKViewModel(),
-        onAnswerAClick = {},
-        onAnswerBClick = {},
-        onAnswerCClick = {},
-        onBackToClassDetailClick = {}
-    )
 }

@@ -28,12 +28,12 @@ class StudentReceivedQuestionVm @Inject constructor(
     private val classId: String =
         checkNotNull(savedStateHandle["classId"]) { "classId missing" }
 
-    /** Strumień: najnowsze pytanie where fromTeacher == true */
+    /** Najnowsze pytanie nauczyciela ➜ sortujemy NUMERYCZNIE po id */
     val question: StateFlow<Question?> = questionRepo.observe(classId)
         .map { list ->
             list
-                .filter { it.fromTeacher }        // tylko od nauczyciela
-                .maxByOrNull { it.id }            // ostatnio dodane
+                .filter { it.fromTeacher }
+                .maxByOrNull { it.id.toLongOrNull() ?: 0L }   // ← tu zmiana
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 

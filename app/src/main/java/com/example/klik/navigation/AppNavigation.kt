@@ -177,6 +177,7 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     onBackToClassListClick = { navController.navigate("studentClassListScreen") },
                     onIUnderstandClick = {/* TODO */},
                     onIDontUnderstandClick = {/* TODO */},
+                    onGoToQuestionFromTeacher = {  navController.navigate("studentReceivedQuestionScreen")  /*Tu dodać przejście do ekranu z pytaniem od nauczyciela dla uczniow dla klasy o danym id*/ },
                     onSendQuestionToTeacherClick = {/* TODO */}
                 )
             }
@@ -187,7 +188,7 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     onAnswerAClick = {/* TODO: ZAIMPLEMENTOWAC */},
                     onAnswerBClick = {/* TODO: ZAIMPLEMENTOWAC */},
                     onAnswerCClick = {/* TODO: ZAIMPLEMENTOWAC */},
-                    onBackToClassDetailClick = {navController.navigate("studentClassListScreen")}
+                    onBackToClassDetailClick = {navController.navigate("studentClassDetailScreen/{classId}")}
                 )
             }
             composable("studentAddClassScreen"){

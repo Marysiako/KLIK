@@ -21,6 +21,7 @@ fun StudentClassDetailScreen(
     onIUnderstandClick: () -> Unit,
     onIDontUnderstandClick: () -> Unit,
     onSendQuestionToTeacherClick: () -> Unit,
+    onGoToQuestionFromTeacher: ()-> Unit,
     onBackToClassListClick: () -> Unit
 ) {
     //lalalalalalal
@@ -105,6 +106,16 @@ fun StudentClassDetailScreen(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text("Wyślij pytanie")
+            }
+
+            //Przycisk do przejścia do ekranu z pytaniem
+            Button(
+                onClick = {
+                    onGoToQuestionFromTeacher()
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("Pytanie od nazuczyciela")
             }
         }
 

@@ -3,59 +3,36 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.klik.data.repository.ClassRepository
-import com.example.klik.ui.screens.LoginScreen
-import com.example.klik.ui.screens.RegisterScreen
-import com.example.klik.ui.screens.WelcomeScreen
-import com.example.klik.ui.screens.student.StudentAddClassScreen
-import com.example.klik.ui.screens.student.StudentClassDetailScreen
-import com.example.klik.ui.screens.student.StudentClassListScreen
-import com.example.klik.ui.screens.student.StudentReceivedQuestionScreen
-import com.example.klik.ui.screens.teacher.TeacherAskQuestionResultScreen
-import com.example.klik.ui.screens.teacher.TeacherAskQuestionScreen
-import com.example.klik.ui.screens.teacher.TeacherClassListScreen
-import com.example.klik.ui.screens.teacher.TeacherCreateClassScreen
-import com.example.klik.ui.screens.teacher.TeacherReceivedQuestionsScreen
-import com.example.klik.viewmodel.AuthViewModel
-import com.example.klik.viewmodel.student.StudentAddClassVm
-import com.example.klik.viewmodel.student.StudentClassDetailVm
-import com.example.klik.viewmodel.student.StudentClassListVm
-import com.example.klik.viewmodel.teacher.TeacherClassDetailVm
-import com.example.klik.viewmodel.teacher.TeacherCreateClassVm
-import com.example.klik.viewmodel.teacher.setCounters
-import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import com.example.klik.ui.screens.*
+import com.example.klik.ui.screens.student.*
+import com.example.klik.ui.screens.teacher.*
+import com.example.klik.viewmodel.*
+import com.example.klik.viewmodel.student.*
+import com.example.klik.viewmodel.teacher.*
 
 @Composable
 fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
+
     val navController = rememberNavController()
-    Scaffold(
-        // bottomBar = { BottomNavigationBar(navController = navController) }
-    ) { paddingValues ->
+
+    Scaffold { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = "welcomeScreen",
             modifier = Modifier.padding(paddingValues)
         ) {
-            //EKRANY  ---------------------------------------------------------------
+
+            /* ───── WELCOME / AUTH ───── */
             composable("welcomeScreen") {
                 WelcomeScreen(
-                    viewModel = viewModel,
-                    onLoginClick = { navController.navigate("loginScreen") },
+                    viewModel,
+                    onLoginClick    = { navController.navigate("loginScreen") },
                     onRegisterClick = { navController.navigate("registerScreen") }
                 )
             }
@@ -67,11 +44,11 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                         when (role) {
                             "Uczeń"     -> navController.navigate("studentClassListScreen") { popUpTo("login") { inclusive = true } }
                             "Nauczyciel" -> navController.navigate("teacherClassListScreen") { popUpTo("login") { inclusive = true } }
-                            else          -> {/* fallback */}
                         }
                     },
                     bypassLoginStudentClick = { navController.navigate("studentClassListScreen") },
-                    bypassLoginTeacherClick = { navController.navigate("teacherClassListScreen")})
+                    bypassLoginTeacherClick = { navController.navigate("teacherClassListScreen") }
+                )
             }
             composable("registerScreen") {
                 val vm: AuthViewModel = hiltViewModel()
@@ -83,80 +60,70 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                             "Nauczyciel" -> navController.navigate("teacherClassListScreen") { popUpTo("login") { inclusive = true } }
                         }
                     }
-                    )
-            }
-            //EKRANY TEACHER    -----------------------------------------------------
-            /*composable("teacherClassListScreen"){backStackEntry ->
-                val vm: TeacherClassListVm = hiltViewModel(backStackEntry)
-                TeacherClassListScreen(
-                    viewModel = vm,
-                    onLogoutClick         = { navController.navigate("welcomeScreen") { popUpTo("teacherClassList") { inclusive = true } } },
-                    onCreateClassClick    = { navController.navigate("teacherCreateClassScreen") },
-                    onClassListElementClick = { classId ->
-                        navController.navigate("teacherClassDetailScreen/$classId")
-                    }
                 )
             }
-            */
+
+            /* ───── TEACHER LISTA KLAS ───── */
             composable("teacherClassListScreen") {
                 TeacherClassListScreen(
                     viewModel = hiltViewModel(),
-                    onLogoutClick         = { navController.navigate("welcomeScreen") { popUpTo("teacherClassList") { inclusive = true } } },
-                    onCreateClassClick    = { navController.navigate("teacherCreateClassScreen") },
+                    onLogoutClick        = { navController.navigate("welcomeScreen") { popUpTo("teacherClassList") { inclusive = true } } },
+                    onCreateClassClick   = { navController.navigate("teacherCreateClassScreen") },
                     onClassListElementClick = { classId ->
                         navController.navigate("teacherClassDetailScreen/$classId")
                     }
                 )
             }
-            //composable("teacherClassDetailScreen"){backStackEntry ->
-            //    val vm: TeacherClassDetailVm = hiltViewModel(backStackEntry)
-            //    TeacherClassDetailScreen(
-            //        viewModel = vm,
-             //       onBackToClassListClick = {navController.navigate("teacherClassListScreen")},
-             //       onAskStudentsClick     = { navController.navigate("teacherAskQuestionScreen/${backStackEntry.arguments?.getString("classId")}") },
-             //       onReceivedQuestionClick= { navController.navigate("teacherReceivedQuestionsScreen/${backStackEntry.arguments?.getString("classId")}") }
-            //        )
-            //}
+
+            /* ───── TEACHER – SZCZEGÓŁ KLASY ───── */
             composable(
                 route = "teacherClassDetailScreen/{classId}",
                 arguments = listOf(navArgument("classId") { type = NavType.StringType })
-            ) {
-                val vm: TeacherClassDetailVm = hiltViewModel()
+            ) { backStackEntry ->
+                val vm: TeacherClassDetailVm = hiltViewModel(backStackEntry)
+                val classId = backStackEntry.arguments?.getString("classId") ?: ""
                 TeacherClassDetailScreen(
                     viewModel = vm,
                     onBackToClassListClick = { navController.navigate("teacherClassListScreen") },
-                    onAskStudentsClick     = { navController.navigate("teacherAskQuestionScreen") },
-                    onReceivedQuestionClick= { navController.navigate("teacherReceivedQuestionsScreen") }
+                    onAskStudentsClick     = { navController.navigate("teacherAskQuestionScreen/$classId") },
+                    onReceivedQuestionClick= { navController.navigate("teacherReceivedQuestionsScreen/$classId") }
                 )
             }
-            composable("teacherCreateClassScreen"){backStackEntry ->
-                val vm: TeacherCreateClassVm = hiltViewModel(backStackEntry)
+
+            /* ───── TEACHER – TWORZENIE KLASY ───── */
+            composable("teacherCreateClassScreen") {
                 TeacherCreateClassScreen(
-                    viewModel = vm,
-                    onBackToClassListClick = { navController.popBackStack()}
+                    viewModel = hiltViewModel(),
+                    onBackToClassListClick = { navController.popBackStack() }
                 )
             }
-            composable("teacherAskQuestionScreen"){
+
+            /* ───── TEACHER – ZADAWANIE PYTANIA ───── */
+            composable(
+                route = "teacherAskQuestionScreen/{classId}",
+                arguments = listOf(navArgument("classId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val classId = backStackEntry.arguments?.getString("classId") ?: ""
                 TeacherAskQuestionScreen(
                     viewModel = viewModel,
-                    onBackToClassClick = {navController.navigate("teacherClassListScreen")},
-                    onSendToStudentsClick = {/* ZAIMPLEMENTOWAC PROSZE*/}
+                    onBackToClassClick = { navController.navigate("teacherClassDetailScreen/$classId") },
+                    onSendToStudentsClick = { /* TODO */ }
                 )
             }
-            composable("teacherAskQuestionResultScreen"){
-                TeacherAskQuestionResultScreen(
-                    viewModel = viewModel,
-                    onCBackToClassClick = {navController.navigate("teacherClassDetailScreen")}
-                    )
-            }
-            composable("teacherReceivedQuestionsScreen"){
+
+            /* ───── TEACHER – ODEBRANE PYTANIA ───── */
+            composable(
+                route = "teacherReceivedQuestionsScreen/{classId}",
+                arguments = listOf(navArgument("classId") { type = NavType.StringType })
+            ) { backStackEntry ->
                 TeacherReceivedQuestionsScreen(
                     viewModel = viewModel,
-                    onBackToClassClick = {navController.navigate("teacherClassListScreen")}
+                    onBackToClassClick = { navController.popBackStack() }
                 )
             }
-            //EKRANY STUDENT --------------------------------------------------------
-            composable("studentClassListScreen"){
+
+            /* ───── STUDENT LISTA KLAS ───── */
+            composable("studentClassListScreen") {
                 val vm: StudentClassListVm = hiltViewModel()
                 StudentClassListScreen(
                     viewModel = vm,
@@ -167,42 +134,48 @@ fun AppNavigation(viewModel: KLIKViewModel = viewModel()) {
                     }
                 )
             }
+
+            /* ───── STUDENT – SZCZEGÓŁ KLASY ───── */
             composable(
                 route = "studentClassDetailScreen/{classId}",
                 arguments = listOf(navArgument("classId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val vm: StudentClassDetailVm = hiltViewModel(backStackEntry)
+                val classId = backStackEntry.arguments?.getString("classId") ?: ""
                 StudentClassDetailScreen(
                     viewModel = vm,
-                    onBackToClassListClick = { navController.navigate("studentClassListScreen") },
-                    onIUnderstandClick = {/* TODO */},
-                    onIDontUnderstandClick = {/* TODO */},
-                    onGoToQuestionFromTeacher = {  navController.navigate("studentReceivedQuestionScreen")  /*Tu dodać przejście do ekranu z pytaniem od nauczyciela dla uczniow dla klasy o danym id*/ },
-                    //onSendQuestionToTeacherClick = {/* TODO */}
+                    onBackToClassListClick  = { navController.navigate("studentClassListScreen") },
+                    onIUnderstandClick      = { /* opcjonalnie */ },
+                    onIDontUnderstandClick  = { /* opcjonalnie */ },
+                    onGoToQuestionFromTeacher = { navController.navigate("studentReceivedQuestionScreen/$classId") }
                 )
             }
 
-            composable("studentReceivedQuestionScreen"){
+            /* ───── STUDENT – PYTANIE OD NAUCZYCIELA ───── */
+            composable(
+                route = "studentReceivedQuestionScreen/{classId}",
+                arguments = listOf(navArgument("classId") { type = NavType.StringType })
+            ) { backStackEntry ->
                 StudentReceivedQuestionScreen(
                     viewModel = viewModel,
-                    onAnswerAClick = {/* TODO: ZAIMPLEMENTOWAC */},
-                    onAnswerBClick = {/* TODO: ZAIMPLEMENTOWAC */},
-                    onAnswerCClick = {/* TODO: ZAIMPLEMENTOWAC */},
-                    onBackToClassDetailClick = {navController.navigate("studentClassDetailScreen/{classId}")}
+                    onAnswerAClick        = { /* TODO */ },
+                    onAnswerBClick        = { /* TODO */ },
+                    onAnswerCClick        = { /* TODO */ },
+                    onBackToClassDetailClick = {
+                        val classId = backStackEntry.arguments?.getString("classId") ?: ""
+                        navController.navigate("studentClassDetailScreen/$classId")
+                    }
                 )
             }
-            composable("studentAddClassScreen"){
+
+            /* ───── STUDENT – DODAWANIE KLASY ───── */
+            composable("studentAddClassScreen") {
                 val vm: StudentAddClassVm = hiltViewModel()
                 StudentAddClassScreen(
                     viewModel = vm,
-                   // onAddClassClick = {navController.navigate("studentClassListScreen")}, /* TODO: ZAIMPLEMENTOWAC */
-                    onBackToClassListScreen = {navController.navigate("studentClassListScreen")}
+                    onBackToClassListScreen = { navController.navigate("studentClassListScreen") }
                 )
             }
-
         }
     }
 }
-
-
-

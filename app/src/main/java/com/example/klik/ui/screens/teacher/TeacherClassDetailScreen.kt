@@ -40,7 +40,7 @@ fun TeacherClassDetailScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = "ID: $ui.value.id",
+                text = "ID: ${ui.value.id}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

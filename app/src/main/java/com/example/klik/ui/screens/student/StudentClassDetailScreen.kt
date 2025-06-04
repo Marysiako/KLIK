@@ -1,6 +1,5 @@
 package com.example.klik.ui.screens.student
 
-import KLIKViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,21 +9,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.klik.ui.screens.student.StudentClassListScreen
+import com.example.klik.viewmodel.student.StudentClassDetailVm
 
 @Composable
 fun StudentClassDetailScreen(
-    viewModel: KLIKViewModel,
+    viewModel: StudentClassDetailVm,
     onIUnderstandClick: () -> Unit,
     onIDontUnderstandClick: () -> Unit,
-    onSendQuestionToTeacherClick: () -> Unit,
-    onBackToClassListClick: () -> Unit
+    onBackToClassListClick: () -> Unit,
+    onGoToQuestionFromTeacher: () -> Unit
 ) {
-    // Przykładowe dane
-    val subjectName = "Matematyka"
-    val classId = 101
+    val ui by viewModel.uiState.collectAsState()
     var questionText by remember { mutableStateOf("") }
 
     Column(
@@ -33,61 +29,51 @@ fun StudentClassDetailScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Nagłówek
+
+        /* ───── Nagłówek ───── */
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = subjectName,
+                text = ui.name.ifBlank { "Klasa" },
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
-            Text(
-                text = "ID: $classId",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Text("ID: ${ui.id}", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(Modifier.height(5.dp))
 
-        // Prostokąty + pole na pytanie
+        /* ───── Główna kolumna ───── */
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // NIE ROZUMIEM - czerwony
+            // NIE ROZUMIEM
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
+                Modifier.fillMaxWidth()
                     .background(Color.Red)
                     .padding(vertical = 30.dp)
-                    .clickable { onIDontUnderstandClick }
-            ) {
-                Text(
-                    text = "Nie rozumiem",
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
+                    .clickable {
+                        onIDontUnderstandClick()
+                        //viewModel.incrementDontUnderstand()
+                    }
+            ) { Text("Nie rozumiem", color = Color.White, modifier = Modifier.align(Alignment.Center)) }
 
-            // ROZUMIEM - zielony
+            // ROZUMIEM
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
+                Modifier.fillMaxWidth()
                     .background(Color.Green)
                     .padding(vertical = 30.dp)
-                    .clickable { onIUnderstandClick }
-            ) {
-                Text(
-                    text = "Rozumiem",
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
+                    .clickable {
+                        onIUnderstandClick()
+                        //viewModel.incrementUnderstand()
+                    }
+            ) { Text("Rozumiem", color = Color.White, modifier = Modifier.align(Alignment.Center)) }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(Modifier.height(32.dp))
 
-            // Pole tekstowe na pytanie
+            // Pole tekstowe
             OutlinedTextField(
                 value = questionText,
                 onValueChange = { questionText = it },
@@ -95,38 +81,30 @@ fun StudentClassDetailScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Przycisk wysyłający pytanie
+            // Wyślij pytanie (uczeń ➜ uczeń)
             Button(
                 onClick = {
-                    onSendQuestionToTeacherClick
+                    viewModel.sendQuestion(questionText)
+                    questionText = ""
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text("Wyślij pytanie")
-            }
+            ) { Text("Wyślij pytanie") }
+
+            // Pozostawiony przycisk (jeśli kiedyś wykorzystasz)
+            Button(
+                onClick = onGoToQuestionFromTeacher,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) { Text("Pytanie od nauczyciela") }
         }
 
-        // Dolna nawigacja
+        /* ───── Dolna nawigacja ───── */
         NavigationBar {
             NavigationBarItem(
                 selected = false,
-                onClick = { onBackToClassListClick },
+                onClick = onBackToClassListClick,
                 icon = {},
                 label = { Text("Powrót do klas") }
             )
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun StudentClassDetailScreenPreview() {
-    StudentClassDetailScreen(
-        viewModel = KLIKViewModel(),
-        onIUnderstandClick = {},
-        onIDontUnderstandClick = {},
-        onSendQuestionToTeacherClick = {},
-        onBackToClassListClick = {}
-    )
 }

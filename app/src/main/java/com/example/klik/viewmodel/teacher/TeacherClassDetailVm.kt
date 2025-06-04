@@ -38,8 +38,8 @@ class TeacherClassDetailVm @Inject constructor(
                         it.copy(
                             name             = cls.name,
                             id               = cls.id,
-                           // understand       = cls.extra<Int>("understandCount"),          TODO
-                           // dontUnderstand   = cls.extra<Int>("dontUnderstandCount")       TODO
+                            //understand = cls.understandCount,
+                            //dontUnderstand = cls.dontUnderstandCount
                         )
                     }
                 }
